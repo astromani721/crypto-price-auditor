@@ -32,6 +32,17 @@ class AuditControllerTest {
     }
 
     @Test
+    void getSpotPrice_delegatesToService() {
+        CoinbaseResponse.Data data = new CoinbaseResponse.Data("BTC", "USD", "123.45");
+        when(service.getSpotPrice("BTC")).thenReturn(data);
+
+        CoinbaseResponse.Data result = controller.getSpotPrice("BTC");
+
+        assertEquals(data, result);
+        verify(service).getSpotPrice("BTC");
+    }
+
+    @Test
     void getAllHistory_delegatesToService() {
         List<PriceEntity> entities = List.of(new PriceEntity());
         when(service.getAllHistoryDesc()).thenReturn(entities);

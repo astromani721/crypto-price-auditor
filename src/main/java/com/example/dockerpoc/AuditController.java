@@ -19,6 +19,11 @@ public class AuditController {
         return service.fetchAndSavePrice(symbol);
     }
 
+    @GetMapping("/{symbol}/spot")
+    public CoinbaseResponse.Data getSpotPrice(@PathVariable String symbol) {
+        return service.getSpotPrice(symbol);
+    }
+
     @GetMapping("/history")
     public List<PriceEntity> getAllHistory() {
         return service.getAllHistoryDesc();

@@ -19,18 +19,7 @@ public class CryptoService {
 
     @Cacheable(cacheNames = "coinbaseSpot", key = "#symbol.toUpperCase()")
     public PriceEntity fetchAndSavePrice(String symbol) {
-        String pair = symbol.toUpperCase() + "-USD";
-
-        CoinbaseResponse response = restClient.get()
-                .uri("/v2/prices/{pair}/spot", pair)
-                .retrieve()
-                .body(CoinbaseResponse.class);
-
-        if (response == null || response.data() == null) {
-            throw new IllegalStateException("Empty response from Coinbase");
-        }
-
-        CoinbaseResponse.Data data = response.data();
+        CoinbaseResponse.Data data = fetchSpotData(symbol);
 
         PriceEntity entity = new PriceEntity();
         entity.setSymbol(data.base());
@@ -55,5 +44,25 @@ public class CryptoService {
 
     public List<PriceEntity> getHistoryBySymbolDesc(String symbol) {
         return repository.findBySymbolOrderByIdDesc(symbol);
+    }
+
+    @Cacheable(cacheNames = "coinbaseSpotReadonly", key = "#symbol.toUpperCase()")
+    public CoinbaseResponse.Data getSpotPrice(String symbol) {
+        return fetchSpotData(symbol);
+    }
+
+    private CoinbaseResponse.Data fetchSpotData(String symbol) {
+        String pair = symbol.toUpperCase() + "-USD";
+
+        CoinbaseResponse response = restClient.get()
+                .uri("/v2/prices/{pair}/spot", pair)
+                .retrieve()
+                .body(CoinbaseResponse.class);
+
+        if (response == null || response.data() == null) {
+            throw new IllegalStateException("Empty response from Coinbase");
+        }
+
+        return response.data();
     }
 }

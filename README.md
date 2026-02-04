@@ -40,8 +40,12 @@ curl -X POST http://localhost:8080/api/audit/ETH
 curl -X POST http://localhost:8080/api/audit/SOL
 ```
 
+### B. Read-Only Spot Price (No DB write)
+```bash
+curl http://localhost:8080/api/audit/BTC/spot
+```
 
-### B. View History (Serve) View the audit trail.
+### C. View History (Serve) View the audit trail.
 #### View All History
 ```bash
 curl http://localhost:8080/api/audit/history
