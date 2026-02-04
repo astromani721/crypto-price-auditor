@@ -18,6 +18,8 @@
     <java.version>21</java.version>
     <lombok.version>1.18.38</lombok.version>
     <dependency.check.version>12.2.0</dependency.check.version>
+    <pmd.version>3.27.0</pmd.version>
+    <spotbugs.plugin.version>4.9.3.0</spotbugs.plugin.version>
   </properties>
   <dependencies>
     <dependency>
@@ -82,6 +84,50 @@
           <nvdApiServerId>nvd</nvdApiServerId>
           <nvdApiDelay>2000</nvdApiDelay>
           <nvdMaxRetryCount>10</nvdMaxRetryCount>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-pmd-plugin</artifactId>
+        <version>${pmd.version}</version>
+        <configuration>
+          <failOnViolation>true</failOnViolation>
+          <printFailingErrors>true</printFailingErrors>
+          <targetJdk>${java.version}</targetJdk>
+          <minimumPriority>2</minimumPriority>
+          <rulesets>
+            <ruleset>category/java/bestpractices.xml</ruleset>
+            <ruleset>category/java/codestyle.xml</ruleset>
+            <ruleset>category/java/design.xml</ruleset>
+            <ruleset>category/java/errorprone.xml</ruleset>
+            <ruleset>category/java/multithreading.xml</ruleset>
+            <ruleset>category/java/performance.xml</ruleset>
+            <ruleset>category/java/security.xml</ruleset>
+          </rulesets>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+        <version>${spotbugs.plugin.version}</version>
+        <configuration>
+          <effort>Max</effort>
+          <threshold>Low</threshold>
+          <failOnError>true</failOnError>
         </configuration>
         <executions>
           <execution>

@@ -2,6 +2,7 @@ package com.example.dockerpoc;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import org.springframework.cache.annotation.Cacheable;
@@ -52,7 +53,7 @@ public class CryptoService {
     }
 
     private CoinbaseResponse.Data fetchSpotData(String symbol) {
-        String pair = symbol.toUpperCase() + "-USD";
+        String pair = symbol.toUpperCase(Locale.ROOT) + "-USD";
 
         CoinbaseResponse response = restClient.get()
                 .uri("/v2/prices/{pair}/spot", pair)

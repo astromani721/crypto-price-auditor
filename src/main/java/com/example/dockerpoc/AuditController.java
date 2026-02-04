@@ -1,8 +1,8 @@
 package com.example.dockerpoc;
 
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.Locale;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/audit")
@@ -31,6 +31,6 @@ public class AuditController {
 
     @GetMapping("/history/{symbol}")
     public List<PriceEntity> getSymbolHistory(@PathVariable String symbol) {
-        return service.getHistoryBySymbolDesc(symbol.toUpperCase());
+        return service.getHistoryBySymbolDesc(symbol.toUpperCase(Locale.ROOT));
     }
 }
