@@ -34,22 +34,22 @@ class AuditControllerTest {
     @Test
     void getAllHistory_delegatesToService() {
         List<PriceEntity> entities = List.of(new PriceEntity());
-        when(service.getAllHistory()).thenReturn(entities);
+        when(service.getAllHistoryDesc()).thenReturn(entities);
 
         List<PriceEntity> result = controller.getAllHistory();
 
         assertEquals(entities, result);
-        verify(service).getAllHistory();
+        verify(service).getAllHistoryDesc();
     }
 
     @Test
     void getSymbolHistory_uppercasesSymbol() {
         List<PriceEntity> entities = List.of(new PriceEntity());
-        when(service.getHistoryBySymbol("BTC")).thenReturn(entities);
+        when(service.getHistoryBySymbolDesc("BTC")).thenReturn(entities);
 
         List<PriceEntity> result = controller.getSymbolHistory("btc");
 
         assertEquals(entities, result);
-        verify(service).getHistoryBySymbol("BTC");
+        verify(service).getHistoryBySymbolDesc("BTC");
     }
 }

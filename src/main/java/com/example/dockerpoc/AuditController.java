@@ -21,11 +21,11 @@ public class AuditController {
 
     @GetMapping("/history")
     public List<PriceEntity> getAllHistory() {
-        return service.getAllHistory();
+        return service.getAllHistoryDesc();
     }
 
     @GetMapping("/history/{symbol}")
     public List<PriceEntity> getSymbolHistory(@PathVariable String symbol) {
-        return service.getHistoryBySymbol(symbol.toUpperCase());
+        return service.getHistoryBySymbolDesc(symbol.toUpperCase());
     }
 }

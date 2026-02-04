@@ -48,4 +48,12 @@ public class CryptoService {
     public List<PriceEntity> getHistoryBySymbol(String symbol) {
         return repository.findBySymbol(symbol);
     }
+
+    public List<PriceEntity> getAllHistoryDesc() {
+        return repository.findAllByOrderByIdDesc();
+    }
+
+    public List<PriceEntity> getHistoryBySymbolDesc(String symbol) {
+        return repository.findBySymbolOrderByIdDesc(symbol);
+    }
 }

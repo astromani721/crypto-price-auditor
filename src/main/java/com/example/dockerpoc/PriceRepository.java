@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface PriceRepository extends JpaRepository<PriceEntity, Long> {
     List<PriceEntity> findBySymbol(String symbol);
+    List<PriceEntity> findAllByOrderByIdDesc();
+    List<PriceEntity> findBySymbolOrderByIdDesc(String symbol);
 }

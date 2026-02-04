@@ -84,4 +84,24 @@ class CryptoServiceTest {
 
         assertEquals(entities, result);
     }
+
+    @Test
+    void getAllHistoryDesc_delegatesToRepository() {
+        List<PriceEntity> entities = List.of(new PriceEntity());
+        when(repository.findAllByOrderByIdDesc()).thenReturn(entities);
+
+        List<PriceEntity> result = service.getAllHistoryDesc();
+
+        assertEquals(entities, result);
+    }
+
+    @Test
+    void getHistoryBySymbolDesc_delegatesToRepository() {
+        List<PriceEntity> entities = List.of(new PriceEntity());
+        when(repository.findBySymbolOrderByIdDesc("BTC")).thenReturn(entities);
+
+        List<PriceEntity> result = service.getHistoryBySymbolDesc("BTC");
+
+        assertEquals(entities, result);
+    }
 }
