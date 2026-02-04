@@ -1,10 +1,10 @@
 package com.example.dockerpoc;
 
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClient;
 
 @Service
 public class CryptoService {
@@ -18,15 +18,9 @@ public class CryptoService {
     }
 
     public PriceEntity fetchAndSavePrice(String symbol) {
-        String pair = symbol.toUpperCase() + "-USD";
-
-        CoinbaseResponse response = restClient.get()
-                .uri("/v2/prices/{pair}/spot", pair)
-                .retrieve()
-                .body(CoinbaseResponse.class);
+        CoinbaseResponse.Data data = fetchSpotPrice(symbol);
 
         PriceEntity entity = new PriceEntity();
-        CoinbaseResponse.Data data = response.data();
         entity.setSymbol(data.base());
         entity.setPrice(Double.parseDouble(data.amount()));
         entity.setCurrency(data.currency());
@@ -41,5 +35,21 @@ public class CryptoService {
 
     public List<PriceEntity> getHistoryBySymbol(String symbol) {
         return repository.findBySymbol(symbol);
+    }
+
+    @Cacheable(cacheNames = "coinbaseSpot", key = "#symbol.toUpperCase()")
+    public CoinbaseResponse.Data fetchSpotPrice(String symbol) {
+        String pair = symbol.toUpperCase() + "-USD";
+
+        CoinbaseResponse response = restClient.get()
+                .uri("/v2/prices/{pair}/spot", pair)
+                .retrieve()
+                .body(CoinbaseResponse.class);
+
+        if (response == null || response.data() == null) {
+            throw new IllegalStateException("Empty response from Coinbase");
+        }
+
+        return response.data();
     }
 }

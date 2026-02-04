@@ -5,6 +5,7 @@ A Spring Boot app that fetches the current spot price of any cryptocurrency from
 ## Tech Stack
 * **App:** Java 21, Spring Boot 3.x
 * **Database:** PostgreSQL 15
+* **Cache:** Redis 7
 * **Tooling:** pgAdmin 4
 * **Infrastructure:** Docker & Docker Compose
 
@@ -71,3 +72,8 @@ curl http://localhost:8080/api/audit/history/ETH
   - `SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/auditdb`
   - `SPRING_DATASOURCE_USERNAME=myuser`
   - `SPRING_DATASOURCE_PASSWORD=mypassword`
+- Redis defaults (override via env vars):
+  - `SPRING_REDIS_HOST=localhost`
+  - `SPRING_REDIS_PORT=6379`
+- Cache TTL default:
+  - `CRYPTO_CACHE_TTL=10s`

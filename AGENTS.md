@@ -19,6 +19,7 @@ Ensure the project follows this standard Maven layout:
         │       └── example
         │           └── dockerpoc
         │               ├── DockerPocApplication.java
+        │               ├── CacheConfig.java
         │               ├── PriceEntity.java
         │               ├── CoinbaseResponse.java
         │               ├── PriceRepository.java
