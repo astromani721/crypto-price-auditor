@@ -18,6 +18,36 @@ A Spring Boot app that fetches the current spot price of any cryptocurrency from
 mvn spring-boot:run
 ```
 
+## Quality checks (CI/Verify)
+
+```bash
+mvn clean verify
+```
+
+This runs:
+- OWASP Dependency-Check (requires NVD API key in `~/.m2/settings.xml` under server id `nvd`)
+- PMD (priority 1–2)
+- SpotBugs
+- Checkstyle (Google rules)
+- JaCoCo coverage gates (line >= 60%, branch >= 50%)
+
+### NVD API key setup
+
+Add this to `~/.m2/settings.xml`:
+
+```xml
+<servers>
+  <server>
+    <id>nvd</id>
+    <password>YOUR_NVD_API_KEY</password>
+  </server>
+</servers>
+```
+
+### Coverage report
+
+Open `target/site/jacoco/index.html`.
+
 ## Run with Docker
 
 ```bash
