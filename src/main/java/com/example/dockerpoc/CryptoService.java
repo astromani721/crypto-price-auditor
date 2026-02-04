@@ -26,9 +26,10 @@ public class CryptoService {
                 .body(CoinbaseResponse.class);
 
         PriceEntity entity = new PriceEntity();
-        entity.setSymbol(response.data().base());
-        entity.setPrice(Double.parseDouble(response.data().amount()));
-        entity.setCurrency(response.data().currency());
+        CoinbaseResponse.Data data = response.data();
+        entity.setSymbol(data.base());
+        entity.setPrice(Double.parseDouble(data.amount()));
+        entity.setCurrency(data.currency());
         entity.setFetchedAt(LocalDateTime.now());
 
         return repository.save(entity);
