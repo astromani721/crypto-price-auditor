@@ -93,6 +93,9 @@ class CryptoServiceCacheTest {
     @Autowired
     private RestClient.ResponseSpec responseSpec;
 
+    @Autowired
+    private PriceRepository priceRepository;
+
     @BeforeEach
     void setUp() {
         when(restClient.get()).thenReturn(uriSpec);
@@ -103,11 +106,18 @@ class CryptoServiceCacheTest {
     }
 
     @Test
-    void fetchSpotPrice_isCachedBySymbol() {
-        CoinbaseResponse.Data first = service.fetchSpotPrice("btc");
-        CoinbaseResponse.Data second = service.fetchSpotPrice("BTC");
+    void fetchAndSavePrice_isCachedBySymbol() {
+        when(responseSpec.body(CoinbaseResponse.class))
+                .thenReturn(new CoinbaseResponse(new CoinbaseResponse.Data("BTC", "USD", "123.45")));
+        when(priceRepository.save(Mockito.any(PriceEntity.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
 
-        assertEquals(first, second);
+        PriceEntity first = service.fetchAndSavePrice("btc");
+        PriceEntity second = service.fetchAndSavePrice("BTC");
+
+        assertEquals(first.getSymbol(), second.getSymbol());
+        assertEquals(first.getPrice(), second.getPrice());
         verify(restClient, times(1)).get();
+        verify(priceRepository, times(1)).save(Mockito.any(PriceEntity.class));
     }
 }
