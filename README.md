@@ -44,6 +44,10 @@ Add this to `~/.m2/settings.xml`:
 </servers>
 ```
 
+### CI (GitHub Actions)
+
+Set a repository secret named `NVD_API_KEY` so the OWASP Dependency-Check step can access NVD.
+
 ### Coverage report
 
 Open `target/site/jacoco/index.html`.
