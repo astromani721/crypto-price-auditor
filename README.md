@@ -66,6 +66,7 @@ docker-compose up --build
 - Prometheus UI: `http://localhost:9090`
 - Grafana UI: `http://localhost:3000` (default login: admin / admin)
 - In Grafana, set the Prometheus data source URL to `http://prometheus:9090` (container-to-container).
+- Grafana is provisioned with a Prometheus data source and an "Audit API Metrics" dashboard.
 
 ### Custom metrics
 
