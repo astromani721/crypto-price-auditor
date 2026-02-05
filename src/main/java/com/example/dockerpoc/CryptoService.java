@@ -1,5 +1,9 @@
 package com.example.dockerpoc;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
@@ -12,10 +16,13 @@ public class CryptoService {
 
     private final PriceRepository repository;
     private final RestClient restClient;
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "MeterRegistry is managed by Spring and intended to be shared")
+    private final MeterRegistry meterRegistry;
 
-    public CryptoService(PriceRepository repository, RestClient.Builder restClientBuilder) {
+    public CryptoService(PriceRepository repository, RestClient.Builder restClientBuilder, MeterRegistry meterRegistry) {
         this.repository = repository;
         this.restClient = restClientBuilder.baseUrl("https://api.coinbase.com").build();
+        this.meterRegistry = meterRegistry;
     }
 
     @Cacheable(cacheNames = "coinbaseSpot", key = "#symbol.toUpperCase()")
@@ -57,12 +64,24 @@ public class CryptoService {
     }
 
     private CoinbaseResponse.Data fetchSpotData(String symbol) {
-        String pair = symbol.toUpperCase(Locale.ROOT) + "-USD";
+        String normalizedSymbol = symbol.toUpperCase(Locale.ROOT);
+        String pair = normalizedSymbol + "-USD";
+        Counter counter = Counter.builder("coinbase.spot.count")
+                .description("Count of Coinbase spot requests")
+                .tag("symbol", normalizedSymbol)
+                .register(meterRegistry);
+        Timer timer = Timer.builder("coinbase.spot.latency")
+                .description("Latency for Coinbase spot requests")
+                .tag("symbol", normalizedSymbol)
+                .publishPercentileHistogram()
+                .publishPercentiles(0.5, 0.95, 0.99)
+                .register(meterRegistry);
+        counter.increment();
 
-        CoinbaseResponse response = restClient.get()
+        CoinbaseResponse response = timer.record(() -> restClient.get()
                 .uri("/v2/prices/{pair}/spot", pair)
                 .retrieve()
-                .body(CoinbaseResponse.class);
+                .body(CoinbaseResponse.class));
 
         if (response == null || response.data() == null) {
             throw new IllegalStateException("Empty response from Coinbase");

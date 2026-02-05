@@ -17,6 +17,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.web.client.RestClient;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.mockito.Mockito;
 
 @SpringBootTest(classes = {CryptoService.class, CryptoServiceCacheTest.TestConfig.class})
@@ -69,6 +71,11 @@ class CryptoServiceCacheTest {
         @Bean
         RestClient.ResponseSpec responseSpec() {
             return Mockito.mock(RestClient.ResponseSpec.class);
+        }
+
+        @Bean
+        MeterRegistry meterRegistry() {
+            return new SimpleMeterRegistry();
         }
     }
 

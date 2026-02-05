@@ -5,21 +5,47 @@
   "tags": ["crypto", "audit"],
   "timezone": "browser",
   "schemaVersion": 38,
-  "version": 1,
+  "version": 2,
   "refresh": "10s",
   "panels": [
     {
       "type": "timeseries",
-      "title": "Audit Request Rate (per minute)",
+      "title": "Spot Latency p99 (seconds)",
       "datasource": {"type": "prometheus", "uid": "Prometheus"},
       "targets": [
         {
-          "expr": "60 * sum by (symbol) (rate(audit_price_count_total[1m]))",
+          "expr": "histogram_quantile(0.99, sum by (le, symbol) (rate(coinbase_spot_latency_seconds_bucket[5m])))",
           "legendFormat": "{{symbol}}",
           "refId": "A"
         }
       ],
       "gridPos": {"x": 0, "y": 0, "w": 12, "h": 8}
+    },
+    {
+      "type": "timeseries",
+      "title": "Audit Latency p99 (seconds)",
+      "datasource": {"type": "prometheus", "uid": "Prometheus"},
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, sum by (le, symbol) (rate(audit_price_latency_seconds_bucket[5m])))",
+          "legendFormat": "{{symbol}}",
+          "refId": "B"
+        }
+      ],
+      "gridPos": {"x": 12, "y": 0, "w": 12, "h": 8}
+    },
+    {
+      "type": "timeseries",
+      "title": "Spot Latency p95 (seconds)",
+      "datasource": {"type": "prometheus", "uid": "Prometheus"},
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum by (le, symbol) (rate(coinbase_spot_latency_seconds_bucket[5m])))",
+          "legendFormat": "{{symbol}}",
+          "refId": "C"
+        }
+      ],
+      "gridPos": {"x": 0, "y": 8, "w": 12, "h": 8}
     },
     {
       "type": "timeseries",
@@ -29,10 +55,49 @@
         {
           "expr": "histogram_quantile(0.95, sum by (le, symbol) (rate(audit_price_latency_seconds_bucket[5m])))",
           "legendFormat": "{{symbol}}",
-          "refId": "B"
+          "refId": "D"
         }
       ],
-      "gridPos": {"x": 12, "y": 0, "w": 12, "h": 8}
+      "gridPos": {"x": 12, "y": 8, "w": 12, "h": 8}
+    },
+    {
+      "type": "timeseries",
+      "title": "Spot Request Rate (per minute)",
+      "datasource": {"type": "prometheus", "uid": "Prometheus"},
+      "targets": [
+        {
+          "expr": "60 * sum by (symbol) (rate(coinbase_spot_count_total[1m]))",
+          "legendFormat": "{{symbol}}",
+          "refId": "E"
+        }
+      ],
+      "gridPos": {"x": 0, "y": 16, "w": 12, "h": 8}
+    },
+    {
+      "type": "timeseries",
+      "title": "Audit Request Rate (per minute)",
+      "datasource": {"type": "prometheus", "uid": "Prometheus"},
+      "targets": [
+        {
+          "expr": "60 * sum by (symbol) (rate(audit_price_count_total[1m]))",
+          "legendFormat": "{{symbol}}",
+          "refId": "F"
+        }
+      ],
+      "gridPos": {"x": 12, "y": 16, "w": 12, "h": 8}
+    },
+    {
+      "type": "timeseries",
+      "title": "Spot Average Latency (seconds)",
+      "datasource": {"type": "prometheus", "uid": "Prometheus"},
+      "targets": [
+        {
+          "expr": "sum by (symbol) (rate(coinbase_spot_latency_seconds_sum[5m])) / sum by (symbol) (rate(coinbase_spot_latency_seconds_count[5m]))",
+          "legendFormat": "{{symbol}}",
+          "refId": "G"
+        }
+      ],
+      "gridPos": {"x": 0, "y": 24, "w": 12, "h": 8}
     },
     {
       "type": "timeseries",
@@ -42,10 +107,10 @@
         {
           "expr": "sum by (symbol) (rate(audit_price_latency_seconds_sum[5m])) / sum by (symbol) (rate(audit_price_latency_seconds_count[5m]))",
           "legendFormat": "{{symbol}}",
-          "refId": "C"
+          "refId": "H"
         }
       ],
-      "gridPos": {"x": 0, "y": 8, "w": 24, "h": 8}
+      "gridPos": {"x": 12, "y": 24, "w": 12, "h": 8}
     }
   ]
 }

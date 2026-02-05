@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestClient;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 
 @ExtendWith(MockitoExtension.class)
 class CryptoServiceTest {
@@ -43,7 +44,7 @@ class CryptoServiceTest {
     void setUp() {
         when(restClientBuilder.baseUrl("https://api.coinbase.com")).thenReturn(restClientBuilder);
         when(restClientBuilder.build()).thenReturn(restClient);
-        service = new CryptoService(repository, restClientBuilder);
+        service = new CryptoService(repository, restClientBuilder, new SimpleMeterRegistry());
     }
 
     @Test

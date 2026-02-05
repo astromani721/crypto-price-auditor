@@ -85,6 +85,8 @@ BASE_URL=http://localhost:8080 SLEEP_SECONDS=0.5 ./scripts/hit-audit.sh
 
 - `audit.price.count{symbol="BTC"}`: request count for `POST /api/audit/{symbol}`
 - `audit.price.latency{symbol="BTC"}`: request latency for `POST /api/audit/{symbol}`
+- `coinbase.spot.count{symbol="BTC"}`: Coinbase spot request count
+- `coinbase.spot.latency{symbol="BTC"}`: Coinbase spot request latency
 
 ### Grafana panel examples
 
@@ -105,6 +107,18 @@ sum by (symbol) (rate(audit_price_latency_seconds_count[5m]))
 p95 latency (per symbol)
 ```text
 histogram_quantile(0.95, sum by (le, symbol) (rate(audit_price_latency_seconds_bucket[5m])))
+```
+
+p99 latency (per symbol)
+```text
+histogram_quantile(0.99, sum by (le, symbol) (rate(audit_price_latency_seconds_bucket[5m])))
+```
+
+Spot average latency (per symbol, last 5m)
+```text
+sum by (symbol) (rate(coinbase_spot_latency_seconds_sum[5m]))
+/
+sum by (symbol) (rate(coinbase_spot_latency_seconds_count[5m]))
 ```
 
 ## Using the API
