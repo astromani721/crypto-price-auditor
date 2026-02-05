@@ -63,4 +63,19 @@ class AuditControllerTest {
         assertEquals(entities, result);
         verify(service).getHistoryBySymbolDesc("BTC");
     }
+
+    @Test
+    void health_callsSpotAndCount_andValidatesSpot() {
+        CoinbaseResponse.Data data = new CoinbaseResponse.Data("BTC", "USD", "123.45");
+        when(service.getSpotPrice("BTC")).thenReturn(data);
+        when(service.getHistoryCount()).thenReturn(0L);
+
+        var result = controller.health();
+
+        assertEquals("BTC", result.get("symbol"));
+        assertEquals(0L, result.get("count"));
+        assertEquals(true, result.get("healthy"));
+        verify(service).getSpotPrice("BTC");
+        verify(service).getHistoryCount();
+    }
 }

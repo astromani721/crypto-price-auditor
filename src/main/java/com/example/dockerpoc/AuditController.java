@@ -2,6 +2,7 @@ package com.example.dockerpoc;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -32,5 +33,33 @@ public class AuditController {
     @GetMapping("/history/{symbol}")
     public List<PriceEntity> getSymbolHistory(@PathVariable String symbol) {
         return service.getHistoryBySymbolDesc(symbol.toUpperCase(Locale.ROOT));
+    }
+
+    @GetMapping("/health")
+    public Map<String, Object> health() {
+        String symbol = "BTC";
+        CoinbaseResponse.Data spot = service.getSpotPrice(symbol);
+        long count = service.getHistoryCount();
+        boolean spotOk = spot != null
+                && "BTC".equalsIgnoreCase(spot.base())
+                && "USD".equalsIgnoreCase(spot.currency())
+                && spot.amount() != null
+                && isPositiveNumber(spot.amount());
+        if (!spotOk) {
+            throw new IllegalStateException("Invalid spot response for health check");
+        }
+        return Map.of(
+                "symbol", spot.base(),
+                "count", count,
+                "healthy", count >= 0
+        );
+    }
+
+    private boolean isPositiveNumber(String amount) {
+        try {
+            return Double.parseDouble(amount) > 0;
+        } catch (NumberFormatException ex) {
+            return false;
+        }
     }
 }

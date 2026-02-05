@@ -90,6 +90,11 @@ curl http://localhost:8080/api/audit/history
 curl http://localhost:8080/api/audit/history/ETH
 ```
 
+### D. Health Check (read-only)
+```bash
+curl http://localhost:8080/api/audit/health
+```
+
 ## Manager Database (pgAdmin)
 
 1. Go to http://localhost:5050

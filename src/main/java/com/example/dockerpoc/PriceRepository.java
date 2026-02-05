@@ -8,4 +8,5 @@ public interface PriceRepository extends JpaRepository<PriceEntity, Long> {
     List<PriceEntity> findBySymbol(String symbol);
     List<PriceEntity> findAllByOrderByIdDesc();
     List<PriceEntity> findBySymbolOrderByIdDesc(String symbol);
+    long countAllBy();
 }

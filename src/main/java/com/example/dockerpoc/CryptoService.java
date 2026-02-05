@@ -47,6 +47,10 @@ public class CryptoService {
         return repository.findBySymbolOrderByIdDesc(symbol);
     }
 
+    public long getHistoryCount() {
+        return repository.countAllBy();
+    }
+
     @Cacheable(cacheNames = "coinbaseSpotReadonly", key = "#symbol.toUpperCase()")
     public CoinbaseResponse.Data getSpotPrice(String symbol) {
         return fetchSpotData(symbol);
