@@ -59,6 +59,19 @@ Open `target/site/jacoco/index.html`.
 docker-compose up --build
 ```
 
+## Load test helper (local)
+
+Use the script to repeatedly hit the audit endpoint with common symbols:
+
+```bash
+./scripts/hit-audit.sh
+```
+
+Optional:
+```bash
+BASE_URL=http://localhost:8080 SLEEP_SECONDS=0.5 ./scripts/hit-audit.sh
+```
+
 ## Observability
 
 - Actuator health: `http://localhost:8080/actuator/health`
@@ -108,6 +121,10 @@ curl -X POST http://localhost:8080/api/audit/ETH
 #### Audit Solana
 ```bash
 curl -X POST http://localhost:8080/api/audit/SOL
+```
+#### Other common symbols
+```text
+ADA, XRP, DOGE, LTC, BNB, AVAX, MATIC
 ```
 
 ### B. Read-Only Spot Price (No DB write)
