@@ -3,6 +3,10 @@ package com.example.dockerpoc;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -10,14 +14,29 @@ import org.springframework.web.bind.annotation.*;
 public class AuditController {
 
     private final CryptoService service;
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "MeterRegistry is managed by Spring and intended to be shared")
+    private final MeterRegistry meterRegistry;
 
-    public AuditController(CryptoService service) {
+    public AuditController(CryptoService service, MeterRegistry meterRegistry) {
         this.service = service;
+        this.meterRegistry = meterRegistry;
     }
 
     @PostMapping("/{symbol}")
     public PriceEntity auditPrice(@PathVariable String symbol) {
-        return service.fetchAndSavePrice(symbol);
+        String normalizedSymbol = symbol.toUpperCase(Locale.ROOT);
+        Counter counter = Counter.builder("audit.price.count")
+                .description("Count of price audit requests")
+                .tag("symbol", normalizedSymbol)
+                .register(meterRegistry);
+        Timer timer = Timer.builder("audit.price.latency")
+                .description("Latency for price audit")
+                .tag("symbol", normalizedSymbol)
+                .publishPercentileHistogram()
+                .publishPercentiles(0.5, 0.95, 0.99)
+                .register(meterRegistry);
+        counter.increment();
+        return timer.record(() -> service.fetchAndSavePrice(symbol));
     }
 
     @GetMapping("/{symbol}/spot")

@@ -58,6 +58,40 @@ Open `target/site/jacoco/index.html`.
 docker-compose up --build
 ```
 
+## Observability
+
+- Actuator health: `http://localhost:8080/actuator/health`
+- Prometheus metrics: `http://localhost:8080/actuator/prometheus`
+- Prometheus UI: `http://localhost:9090`
+- Grafana UI: `http://localhost:3000` (default login: admin / admin)
+- In Grafana, set the Prometheus data source URL to `http://prometheus:9090` (container-to-container).
+
+### Custom metrics
+
+- `audit.price.count{symbol="BTC"}`: request count for `POST /api/audit/{symbol}`
+- `audit.price.latency{symbol="BTC"}`: request latency for `POST /api/audit/{symbol}`
+
+### Grafana panel examples
+
+Create a new dashboard → Add panel, then use:
+
+Request count (per symbol, per minute)
+```text
+sum by (symbol) (rate(audit_price_count_total[1m]))
+```
+
+Average latency (per symbol, last 5m)
+```text
+sum by (symbol) (rate(audit_price_latency_seconds_sum[5m]))
+/
+sum by (symbol) (rate(audit_price_latency_seconds_count[5m]))
+```
+
+p95 latency (per symbol)
+```text
+histogram_quantile(0.95, sum by (le, symbol) (rate(audit_price_latency_seconds_bucket[5m])))
+```
+
 ## Using the API
 ### A. Audit a Price (Ingest) Trigger a fetch for different assets. This calls Coinbase and saves the result to the DB.
 

@@ -5,11 +5,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 
 @ExtendWith(MockitoExtension.class)
 class AuditControllerTest {
@@ -17,8 +18,12 @@ class AuditControllerTest {
     @Mock
     private CryptoService service;
 
-    @InjectMocks
     private AuditController controller;
+
+    @BeforeEach
+    void setUp() {
+        controller = new AuditController(service, new SimpleMeterRegistry());
+    }
 
     @Test
     void auditPrice_delegatesToService() {
