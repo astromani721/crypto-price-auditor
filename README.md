@@ -6,7 +6,7 @@ A Spring Boot app that fetches the current spot price of any cryptocurrency from
 * **App:** Java 21, Spring Boot 3.x
 * **Database:** PostgreSQL 15
 * **Cache:** Redis 7
-* **Tooling:** pgAdmin 4
+* **Tooling:** pgAdmin 4, Prometheus, Grafana
 * **Infrastructure:** Docker & Docker Compose
 
 ## Prerequisites
