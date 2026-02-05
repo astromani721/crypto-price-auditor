@@ -47,6 +47,7 @@ Add this to `~/.m2/settings.xml`:
 ### CI (GitHub Actions)
 
 Set a repository secret named `NVD_API_KEY` so the OWASP Dependency-Check step can access NVD.
+There is also an on-demand and hourly Docker Compose smoke test workflow in GitHub Actions.
 
 ### Coverage report
 
