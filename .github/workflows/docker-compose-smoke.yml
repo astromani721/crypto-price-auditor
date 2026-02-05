@@ -1,0 +1,38 @@
+name: Docker Compose Smoke Test
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 * * * *"
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build and start services
+        run: docker compose up -d --build
+
+      - name: Wait for app
+        run: |
+          for i in {1..30}; do
+            if curl -sSf http://localhost:8080/actuator/health > /dev/null; then
+              echo "App is up"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "App did not start in time" >&2
+          docker compose logs
+          exit 1
+
+      - name: Smoke test health endpoint
+        run: curl -sSf http://localhost:8080/api/audit/health
+
+      - name: Shutdown
+        if: always()
+        run: docker compose down -v
