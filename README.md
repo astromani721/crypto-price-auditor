@@ -2,6 +2,26 @@
 
 A Spring Boot app that fetches the current spot price of any cryptocurrency from the Coinbase API and stores it in PostgreSQL for historical auditing.
 
+## Architecture
+
+```mermaid
+flowchart LR
+  subgraph Clients
+    U[User/Client]
+  end
+  subgraph App["Audit API (Spring Boot)"]
+    A[AuditController]
+    S[CryptoService]
+  end
+  U -->|HTTP| A
+  A --> S
+  S -->|Spot price| CB[Coinbase API]
+  S -->|Write audit| DB[(PostgreSQL)]
+  S -->|Cache| R[(Redis)]
+  App -->|Metrics| P[Prometheus]
+  P --> G[Grafana]
+```
+
 ## Tech Stack
 * **App:** Java 21, Spring Boot 3.x
 * **Database:** PostgreSQL 15
@@ -160,26 +180,6 @@ curl http://localhost:8080/api/audit/history/ETH
 ### D. Health Check (read-only)
 ```bash
 curl http://localhost:8080/api/audit/health
-```
-
-## Architecture
-
-```mermaid
-flowchart LR
-  subgraph Clients
-    U[User/Client]
-  end
-  subgraph App["Audit API (Spring Boot)"]
-    A[AuditController]
-    S[CryptoService]
-  end
-  U -->|HTTP| A
-  A --> S
-  S -->|Spot price| CB[Coinbase API]
-  S -->|Write audit| DB[(PostgreSQL)]
-  S -->|Cache| R[(Redis)]
-  App -->|Metrics| P[Prometheus]
-  P --> G[Grafana]
 ```
 
 ## Manager Database (pgAdmin)
