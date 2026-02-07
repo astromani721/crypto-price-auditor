@@ -89,7 +89,7 @@ Use the script to repeatedly hit the audit endpoint with common symbols:
 
 Optional:
 ```bash
-BASE_URL=http://localhost:8080 SLEEP_SECONDS=0.5 ./scripts/hit-audit.sh
+BASE_URL=http://localhost:8080 SLEEP_SECONDS=1 ./scripts/hit-audit.sh
 ```
 
 ## Observability
